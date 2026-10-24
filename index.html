@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f7f8" />
+    <title>DY画布 · 本地工作台</title>
+    <link rel="icon" type="image/png" href="./media/dy-canvas-symbol.png" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="brand-block"><img class="brand-mark" src="./media/dy-canvas-symbol.png" alt="" /><span class="brand-name">DY画布</span><span class="local-badge">本地</span></div>
+        <div class="board-meta"><span data-icon="Check"></span><span id="saveStatus">本地草稿</span></div>
+        <div class="top-actions">
+          <div class="action-group history-actions">
+            <button class="icon-button" id="undoButton" title="撤销" aria-label="撤销"><span data-icon="Undo2"></span></button>
+            <button class="icon-button" id="redoButton" title="重做" aria-label="重做"><span data-icon="Redo2"></span></button>
+          </div>
+          <span class="toolbar-divider desktop-divider"></span>
+          <div class="action-group file-actions">
+            <button class="icon-button" id="newBoardButton" title="新建空白画布" aria-label="新建空白画布"><span data-icon="FilePlus2"></span><span class="file-action-label">新建画布</span></button>
+            <button class="icon-button" id="saveButton" title="保存画布" aria-label="保存画布"><span data-icon="Save"></span><span class="file-action-label">保存</span></button>
+            <button class="icon-button" id="exportButton" title="导出画布" aria-label="导出画布" aria-haspopup="menu" aria-expanded="false" aria-controls="exportMenu"><span data-icon="Download"></span><span class="file-action-label">导出</span></button>
+            <label class="icon-button file-button" title="导入画布" aria-label="导入画布" tabindex="0"><span data-icon="Upload"></span><span class="file-action-label">导入</span><input id="importInput" type="file" accept="application/json" /></label>
+          </div>
+          <span class="toolbar-divider desktop-divider"></span>
+          <button class="icon-button theme-toggle" id="themeToggle" title="切换白天 / 夜晚模式" aria-label="切换白天 / 夜晚模式"><span data-icon="Sun"></span></button>
+          <button class="icon-button mobile-file-toggle" id="mobileFileToggle" title="画布文件" aria-label="画布文件" aria-expanded="false"><span data-icon="Ellipsis"></span></button>
+          <button class="primary-button" id="presentButton" title="进入讲解模式"><span data-icon="Play"></span><span>讲解</span></button>
+        </div>
+        <div class="export-menu" id="exportMenu" role="menu" aria-label="导出格式" hidden>
+          <button id="exportPngButton" role="menuitem"><span data-icon="Image"></span><span>导出图片</span><small>PNG</small></button>
+          <button id="exportJsonButton" role="menuitem"><span data-icon="FileJson"></span><span>导出画布</span><small>JSON</small></button>
+        </div>
+      </header>
+      <main class="workspace">
+        <aside class="left-rail" aria-label="内容与章节">
+          <div class="rail-heading"><span>工作区</span><span data-icon="PanelLeft"></span></div>
+          <section class="rail-section add-section">
+            <div class="section-kicker">添加内容</div>
+            <button class="add-button text-add" id="addTextButton"><span class="add-symbol" data-icon="Type"></span><strong>文本</strong><span class="row-trailing" data-icon="Plus"></span></button>
+            <button class="add-button image-add" id="addImageButton"><span class="add-symbol" data-icon="Image"></span><strong>图片</strong><small>PNG / JPG</small></button>
+            <button class="add-button video-add" id="addVideoButton"><span class="add-symbol" data-icon="Video"></span><strong>视频</strong><small>MP4 / WebM</small></button>
+            <button class="add-button document-add" id="addDocumentButton"><span class="add-symbol" data-icon="FileText"></span><strong>文档</strong><small>PDF / Word</small></button>
+            <input id="imageInput" type="file" accept="image/*" hidden /><input id="videoInput" type="file" accept="video/*" hidden />
+            <input id="documentInput" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,application/pdf,text/plain" hidden />
+          </section>
+          <section class="rail-section structure-section">
+            <div class="section-kicker">组织</div>
+            <button class="chapter-add" id="addFrameButton" title="从当前内容新建章节"><span data-icon="SquareDashed"></span><strong>新建章节</strong></button>
+            <button class="chapter-add group-add" id="addGroupButton" title="将选中节点编组"><span data-icon="Group"></span><strong>编组</strong><span class="row-trailing" data-icon="Plus"></span></button>
+          </section>
+          <section class="rail-section chapter-panel"><div class="section-kicker">章节</div><div id="frameList" class="frame-list"></div></section>
+          <div class="rail-footer"><span data-icon="HardDrive"></span><span>本地工作台</span></div>
+        </aside>
+        <section class="canvas-panel" aria-label="画布">
+          <div class="canvas-toolbar">
+            <button id="sidebarToggle" class="icon-button panel-toggle" title="内容与章节" aria-label="内容与章节"><span data-icon="PanelLeft"></span></button>
+            <div class="breadcrumb"><span data-icon="Workflow"></span><span>画布</span><span class="crumb-separator">/</span><strong id="boardTitle">我的讲解画布</strong></div>
+            <div class="canvas-actions"><button class="icon-button" id="libraryButton" title="本地画布库" aria-label="本地画布库"><span data-icon="FolderOpen"></span></button><button class="icon-button" id="searchButton" title="搜索画布" aria-label="搜索画布" aria-expanded="false" aria-controls="searchPanel"><span data-icon="Search"></span></button><button class="icon-button" id="clearSelectionButton" title="取消选择" aria-label="取消选择"><span data-icon="MousePointer2"></span></button><button id="inspectorToggle" class="icon-button panel-toggle" title="属性" aria-label="属性"><span data-icon="PanelRight"></span></button></div>
+          </div>
+          <div class="canvas-viewport" id="canvasViewport">
+            <section class="search-panel" id="searchPanel" aria-label="搜索画布" hidden><div class="search-input-row"><span data-icon="Search"></span><input id="searchField" type="search" placeholder="搜索标题、正文、编组或章节" aria-label="搜索内容" autocomplete="off" /><button class="icon-button" id="closeSearchButton" title="关闭搜索" aria-label="关闭搜索"><span data-icon="X"></span></button></div><div id="searchResults" class="search-results" role="list" aria-label="搜索结果"></div><div id="searchCount" class="search-count" aria-live="polite"></div></section>
+            <div class="canvas-world" id="canvasWorld">
+              <div class="grid-layer"></div><div class="frames-layer" id="framesLayer"></div>
+              <svg class="connection-layer" id="connectionLayer" aria-hidden="true"><defs><marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 8 4 L 0 8 z"></path></marker></defs><g id="connections"></g></svg>
+              <div class="nodes-layer" id="nodesLayer"></div>
+              <div class="canvas-empty-hint" id="canvasEmptyHint" hidden><span class="empty-icon" data-icon="Workflow"></span><strong>空白画布</strong></div>
+            </div>
+            <div class="canvas-overlay" id="canvasOverlay">
+              <div class="mini-status"><span data-icon="Waypoints"></span><span id="nodeCountLabel">0 个节点 · 0 条连接</span></div>
+              <div class="drop-hint" id="dropHint" hidden></div>
+              <div class="zoom-controls"><button class="icon-button" id="zoomOutButton" title="缩小" aria-label="缩小"><span data-icon="Minus"></span></button><span class="zoom-value" id="zoomValue">100%</span><button class="icon-button" id="zoomInButton" title="放大" aria-label="放大"><span data-icon="Plus"></span></button><span class="toolbar-divider"></span><button class="icon-button" id="fitButton" title="适应画布" aria-label="适应画布"><span data-icon="Scan"></span></button></div>
+            </div>
+            <div class="creation-menu" id="creationMenu" hidden>
+              <div class="creation-menu-title"><span>添加内容</span><button class="icon-button menu-close" id="closeCreationMenu" title="关闭" aria-label="关闭"><span data-icon="X"></span></button></div>
+              <button data-create-type="text"><span class="menu-icon" data-icon="Type"></span><strong>文本</strong></button>
+              <button data-create-type="image"><span class="menu-icon" data-icon="Image"></span><strong>图片</strong><small>PNG / JPG</small></button>
+              <button data-create-type="video"><span class="menu-icon" data-icon="Video"></span><strong>视频</strong><small>MP4 / WebM</small></button>
+              <button data-create-type="document"><span class="menu-icon" data-icon="FileText"></span><strong>文档</strong><small>PDF / Word</small></button>
+              <button data-create-type="other"><span class="menu-icon" data-icon="Shapes"></span><strong>其他内容</strong></button>
+            </div>
+            <div class="presentation-bar" id="presentationBar" hidden><button class="presentation-exit" id="exitPresentationButton" title="退出讲解"><span data-icon="X"></span><span>退出</span></button><span class="toolbar-divider"></span><div class="presentation-title" id="presentationTitle">讲解模式</div><span id="presentationStepProgress" class="step-progress" hidden></span><div class="presentation-controls"><button id="previousFrameButton" title="上一步" aria-label="上一步"><span data-icon="ChevronLeft"></span></button><span id="presentationProgress">1 / 1</span><button id="nextFrameButton" title="下一步" aria-label="下一步"><span data-icon="ChevronRight"></span></button></div></div>
+          </div>
+        </section>
+        <aside class="right-inspector" id="inspector" aria-label="属性">
+          <div class="rail-heading"><span>属性</span><span data-icon="SlidersHorizontal"></span></div>
+          <div class="inspector-header"><div><div class="section-kicker">当前选择</div><h2 id="inspectorTitle">画布属性</h2></div><button class="icon-button small danger-button" id="deleteSelectedButton" title="删除当前节点" aria-label="删除当前节点"><span data-icon="Trash2"></span></button></div>
+          <div class="inspector-empty" id="inspectorEmpty"><span class="inspector-mark" data-icon="MousePointer2"></span><span>未选择内容</span></div>
+          <div class="inspector-form" id="edgeForm" hidden><label class="field-label">连接文字<input id="edgeLabelField" type="text" maxlength="120" placeholder="原因、结果、举例…" /></label><div class="field-label"><span>当前连接样式</span><div class="segmented-control" role="group" aria-label="当前连接样式"><button data-selected-edge-style="solid">实线</button><button data-selected-edge-style="dashed">虚线</button></div></div><div class="node-facts" id="edgeFacts"></div></div>
+          <div class="inspector-form" id="inspectorForm" hidden>
+            <label class="field-label">标题<input id="titleField" type="text" /></label>
+            <label class="field-label">节点说明<textarea id="bodyField" rows="7"></textarea></label>
+            <div class="field-label"><span>节点颜色</span><div class="color-swatches" role="group" aria-label="节点颜色">
+              <button class="color-swatch" data-color="mint" style="--swatch:#79a88d" title="苔绿" aria-label="苔绿" aria-pressed="false"><span data-icon="Check"></span></button>
+              <button class="color-swatch" data-color="blue" style="--swatch:#7299c5" title="湖蓝" aria-label="湖蓝" aria-pressed="false"><span data-icon="Check"></span></button>
+              <button class="color-swatch" data-color="yellow" style="--swatch:#c7a257" title="琥珀" aria-label="琥珀" aria-pressed="false"><span data-icon="Check"></span></button>
+              <button class="color-swatch" data-color="rose" style="--swatch:#cc8584" title="珊瑚" aria-label="珊瑚" aria-pressed="false"><span data-icon="Check"></span></button>
+              <button class="color-swatch" data-color="ink" style="--swatch:#7e8490" title="石墨" aria-label="石墨" aria-pressed="false"><span data-icon="Check"></span></button>
+            </div><select id="colorField" hidden aria-label="节点颜色"><option value="mint">苔绿</option><option value="blue">湖蓝</option><option value="yellow">琥珀</option><option value="rose">珊瑚</option><option value="ink">石墨</option></select></div>
+            <div class="node-facts" id="nodeFacts"></div>
+          </div>
+          <div id="chapterForm" class="inspector-form" hidden>
+            <label class="field-label"><span id="frameTitleLabel">章节名称</span><input id="frameTitleField" type="text" /></label>
+            <label class="field-label"><span id="frameNotesLabel">讲解备注</span><textarea id="frameNotesField" rows="5"></textarea></label>
+            <div class="dimension-fields"><label class="field-label">宽度<input id="frameWidthField" type="number" min="240" max="20000" step="20" /></label><label class="field-label">高度<input id="frameHeightField" type="number" min="180" max="20000" step="20" /></label></div>
+            <div class="chapter-commands"><button class="icon-button" id="frameUpButton" title="章节前移" aria-label="章节前移"><span data-icon="ArrowUp"></span></button><button class="icon-button" id="frameDownButton" title="章节后移" aria-label="章节后移"><span data-icon="ArrowDown"></span></button><button class="icon-button danger-button" id="deleteFrameButton" title="删除章节框" aria-label="删除章节框"><span data-icon="Trash2"></span></button></div>
+            <button class="secondary-command" id="collapseGroupButton" hidden><span data-icon="FoldVertical"></span><span>折叠编组</span></button>
+            <div id="revealSettings" hidden><label class="checkbox-field"><input id="revealEnabledField" type="checkbox" />逐步显示节点</label><ol id="revealOrderList" class="reveal-order-list" aria-label="节点讲解顺序"></ol></div>
+          </div>
+          <div class="connection-style-panel"><div class="section-kicker">新连接样式</div><div class="segmented-control" role="group" aria-label="新连接样式"><button data-edge-style="solid" aria-pressed="true"><span data-icon="MoveRight"></span><span>实线</span></button><button data-edge-style="dashed" aria-pressed="false"><span data-icon="MoveRight"></span><span>虚线</span></button></div><select id="edgeStyleField" hidden aria-label="新连接样式"><option value="solid">实线箭头</option><option value="dashed">虚线箭头</option></select></div>
+          <div class="inspector-footer"><span data-icon="CircleCheck"></span><span>本地保存</span></div>
+        </aside>
+      </main>
+    </div>
+    <dialog id="libraryDialog" class="workspace-dialog" aria-labelledby="libraryDialogTitle"><div class="dialog-heading"><h2 id="libraryDialogTitle">本地画布库</h2><button class="icon-button" data-close-dialog="libraryDialog" title="关闭" aria-label="关闭画布库"><span data-icon="X"></span></button></div><label class="field-label library-name">当前画布名称<input id="boardNameField" type="text" maxlength="100" /></label><div class="library-toolbar"><div class="segmented-control" role="tablist" aria-label="画布库视图"><button id="libraryBoardsTab" role="tab" aria-selected="true">画布</button><button id="libraryVersionsTab" role="tab" aria-selected="false">历史版本</button></div><button id="libraryNewButton" class="icon-button" title="新建画布" aria-label="新建画布"><span data-icon="FilePlus2"></span></button></div><div id="libraryList" class="library-list" aria-live="polite"></div><div id="libraryStatus" class="library-status" role="status"></div></dialog>
+    <dialog id="documentDialog" class="workspace-dialog document-dialog" aria-labelledby="documentDialogTitle"><div class="dialog-heading"><h2 id="documentDialogTitle">文档</h2><div class="action-group"><button id="downloadDocumentButton" class="icon-button" title="下载原文件" aria-label="下载原文件"><span data-icon="Download"></span></button><button class="icon-button" data-close-dialog="documentDialog" title="关闭" aria-label="关闭文档"><span data-icon="X"></span></button></div></div><div id="documentPreview" class="document-preview"></div></dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./vendor/lucide.min.js"></script><script src="./media/sample-observation.js"></script><script src="./vendor/html-to-image.js"></script><script src="./workspace-features.js"></script><script src="./app.js"></script>
+  </body>
+</html>

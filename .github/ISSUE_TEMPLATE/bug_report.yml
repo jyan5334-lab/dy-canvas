@@ -1,0 +1,30 @@
+name: 问题反馈
+description: 报告 DY画布中的错误或异常
+title: "[问题] "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: 应用版本
+      placeholder: "例如 1.0.1"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 运行环境
+      placeholder: "例如 Windows 11 桌面版，或 Edge 浏览器版"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 请说明操作顺序、预期结果和实际结果。
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 截图或补充说明
+      description: 可拖入截图。请勿上传个人画布、隐私内容或敏感附件。
