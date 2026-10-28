@@ -360,7 +360,7 @@ function handleExportMenuKeydown(event){
 }
 function downloadBoardFile(blob,extension){
   const link=document.createElement("a"),url=URL.createObjectURL(blob);
-  link.href=url;link.download=`DY画布-${new Date().toISOString().slice(0,10)}.${extension}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  link.href=url;link.download=`DYcanvas-${new Date().toISOString().slice(0,10)}.${extension}`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 function exportBoard(){finishNodeTitleEdit();downloadBoardFile(new Blob([JSON.stringify({...currentBoardData(),exportedAt:new Date().toISOString()},null,2)],{type:"application/json"}),"json");showToast("画布 JSON 已导出")}
 function imageExportBounds(){

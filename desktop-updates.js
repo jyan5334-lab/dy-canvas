@@ -24,7 +24,7 @@
       (state.phase === "ready" ? "安装前会保存画布。安装完成后重新打开应用，本地画布与附件继续保留。" :
       state.phase === "available" ? "新版本已发布，下载后可直接安装。" :
       state.phase === "current" ? "暂时没有新的正式版本。" :
-      state.phase === "downloading" ? "可以关闭此窗口，下载将在后台继续。" : "从 DY画布 GitHub 仓库获取正式版本。");
+      state.phase === "downloading" ? "可以关闭此窗口，下载将在后台继续。" : "从 DYcanvas GitHub 仓库获取正式版本。");
     element("updateProgressSection").hidden = state.phase !== "downloading";
     element("updateProgress").value = state.percent || 0;
     element("updateProgressText").textContent = `${Math.floor(state.percent || 0)}% · ${mb(state.transferred)} / ${mb(state.total)}`;

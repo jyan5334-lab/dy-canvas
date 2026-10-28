@@ -9,5 +9,5 @@ Image export uses html-to-image. See `vendor/html-to-image.LICENSE`.
 Desktop updates use electron-updater (MIT) and its runtime dependencies.
 Their license files are distributed with their packages inside app.asar.
 
-The DY Canvas application logo uses the user-approved custom brand artwork.
+The DYcanvas application logo uses custom brand artwork created for this project.
 Lucide is used for interface controls, not the application logo.

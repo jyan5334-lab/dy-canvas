@@ -1,13 +1,14 @@
 {
   "name": "wireless-canvas",
-  "version": "1.1.0",
-  "description": "DY Canvas - Offline canvas for presentations and knowledge organization",
-  "author": "Wireless Canvas",
+  "version": "1.2.0",
+  "description": "DYcanvas - Offline canvas for presentations and knowledge organization",
+  "author": "DYcanvas",
   "license": "UNLICENSED",
   "private": true,
   "main": "desktop/main.cjs",
   "scripts": {
     "test": "node --test desktop/update-controller.test.cjs",
+    "test:shortcuts": "pwsh -NoProfile -File desktop/shortcut-migration.test.ps1",
     "start": "electron .",
     "predist:win": "node node_modules/electron/install.js",
     "dist:win": "node desktop/build-windows.cjs",
@@ -20,11 +21,12 @@
   },
   "build": {
     "appId": "com.local.wirelesscanvas",
-    "productName": "DY画布",
+    "productName": "DYcanvas",
     "executableName": "WirelessCanvas",
     "asar": true,
     "compression": "maximum",
     "electronDist": "node_modules/electron/dist",
+    "extraResources": [{ "from": "desktop/icon.ico", "to": "DYcanvas-${version}.ico" }],
     "directories": {
       "output": "release",
       "buildResources": "desktop"
@@ -71,8 +73,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "DY画布",
-      "uninstallDisplayName": "DY画布",
+      "shortcutName": "DYcanvas",
+      "uninstallDisplayName": "DYcanvas",
       "installerLanguages": [
         "zh_CN",
         "en_US"

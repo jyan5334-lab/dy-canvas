@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="media/dy-canvas-symbol.png" width="80" height="80" alt="DY画布 Logo" />
+  <img src="media/dy-canvas-symbol.png" width="80" height="80" alt="DYcanvas Logo" />
 </p>
 
-# DY画布
+# DYcanvas
 
 **用于本地讲解演示与知识逻辑梳理的无限画布。**
 
@@ -14,11 +14,11 @@
 
 ### 白天模式
 
-![DY画布白天模式：文字、图片、编组和带标签的逻辑连接](docs/screenshots/canvas-light.png)
+![DYcanvas白天模式：文字、图片、编组和带标签的逻辑连接](docs/screenshots/canvas-light.png)
 
 ### 夜晚模式
 
-![DY画布夜晚模式](docs/screenshots/canvas-dark.png)
+![DYcanvas夜晚模式](docs/screenshots/canvas-dark.png)
 
 ### 讲解模式
 
@@ -50,9 +50,11 @@
 
 1. 从 [Releases](https://github.com/jyan5334-lab/dy-canvas/releases/latest) 下载最新的 `DYCanvas-Setup-版本-x64.exe`。
 2. 在 Windows 10 / 11 的 64 位 x64 系统运行安装包。
-3. 从桌面或开始菜单打开「DY画布」。
+3. 从桌面或开始菜单打开「DYcanvas」。
 
 安装后的应用可离线使用，无需另装 Node.js 或启动服务器。当前安装包未做数字签名。
+
+1.2.0 起名称统一为 **DYcanvas**，采用全新 D/Y 标识。旧版通过应用内更新或覆盖安装后，窗口、程序列表、桌面和开始菜单快捷方式使用新名称与图标；应用身份和本地数据目录沿用原版本。用户已删除的快捷方式不会在自动更新时强制恢复。
 
 ### 桌面版在线更新
 

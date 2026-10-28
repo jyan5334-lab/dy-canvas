@@ -12,7 +12,7 @@ const dataDirectory = testing && process.env.CANVAS_TEST_USER_DATA
   : path.join(app.getPath("appData"), "WirelessCanvas");
 fs.mkdirSync(dataDirectory, { recursive: true });
 app.setPath("userData", dataDirectory);
-app.setName("DY画布");
+app.setName("DYcanvas");
 app.setAppUserModelId("com.local.wirelesscanvas");
 protocol.registerSchemesAsPrivileged([{ scheme: "canvas", privileges: {
   standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true
@@ -58,7 +58,7 @@ function waitForClose() {
   closeTimer = setTimeout(async () => {
     if (!mainWindow || mainWindow.isDestroyed() || !closing) return;
     const { response } = await dialog.showMessageBox(mainWindow, {
-      type: "question", title: "DY画布", message: "画布仍在保存",
+      type: "question", title: "DYcanvas", message: "画布仍在保存",
       detail: "可以继续等待，或返回画布。直接退出可能丢失尚未保存的内容。",
       buttons: installAfterSave ? ["继续等待", "返回画布"] : ["继续等待", "返回画布", "直接退出"], defaultId: 0, cancelId: 1
     });
@@ -71,7 +71,7 @@ function waitForClose() {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    title: "DY画布", width: 1440, height: 940, minWidth: 760, minHeight: 560,
+    title: "DYcanvas", width: 1440, height: 940, minWidth: 760, minHeight: 560,
     show: false, backgroundColor: "#eff0f2", autoHideMenuBar: true,
     icon: path.join(__dirname, "icon.png"),
     webPreferences: {
@@ -79,6 +79,11 @@ function createWindow() {
       nodeIntegration: false, contextIsolation: true, sandbox: true,
       webSecurity: true, plugins: true, spellcheck: false
     }
+  });
+  if (process.platform === "win32" && app.isPackaged) mainWindow.setAppDetails({
+    appId: "com.local.wirelesscanvas",
+    appIconPath: path.join(process.resourcesPath, `DYcanvas-${app.getVersion()}.ico`),
+    appIconIndex: 0, relaunchCommand: `"${process.execPath}"`, relaunchDisplayName: "DYcanvas"
   });
   const contents = mainWindow.webContents;
   contents.setWindowOpenHandler(() => ({ action: "deny" }));
@@ -114,7 +119,7 @@ function createWindow() {
   mainWindow.on("closed", () => { clearTimeout(closeTimer); mainWindow = null; });
   contents.on("did-fail-load", (_event, code, description, url, isMainFrame) => {
     if (!isMainFrame || code === -3) return;
-    dialog.showErrorBox("DY画布未能打开", `${description}\n${url}`);
+    dialog.showErrorBox("DYcanvas未能打开", `${description}\n${url}`);
   });
   mainWindow.loadURL(`${ORIGIN}/index.html`);
 }
@@ -189,7 +194,7 @@ else {
       updateTimer = setTimeout(() => updates.check(), 12000);
       periodicUpdateTimer = setInterval(() => updates.check(), 6 * 60 * 60 * 1000);
     }
-  }).catch(error => { dialog.showErrorBox("DY画布启动失败", error.message); app.quit(); });
+  }).catch(error => { dialog.showErrorBox("DYcanvas启动失败", error.message); app.quit(); });
   app.on("window-all-closed", () => app.quit());
   app.on("will-quit", () => { clearTimeout(updateTimer); clearInterval(periodicUpdateTimer); updates?.dispose(); });
 }

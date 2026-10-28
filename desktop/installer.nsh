@@ -1,26 +1,33 @@
 !macro customInstall
+  Push $0
+  Push $1
+  Push $2
+  StrCpy $1 "false"
+  StrCpy $2 "false"
   ${If} $keepShortcuts == "false"
-    Push $0
-    ; A fresh Script Host process also supports Windows environments where
-    ; the installer's in-process shortcut COM calls fail after extraction.
-    ${If} ${FileExists} "$SYSDIR\wscript.exe"
-      FileOpen $0 "$PLUGINSDIR\canvas-shortcut.vbs" w
-      FileWrite $0 'Set shell = CreateObject("WScript.Shell")$\r$\n'
-      FileWrite $0 'Set link = shell.CreateShortcut(WScript.Arguments(0))$\r$\n'
-      FileWrite $0 'link.TargetPath = WScript.Arguments(1)$\r$\n'
-      FileWrite $0 'link.WorkingDirectory = WScript.Arguments(2)$\r$\n'
-      FileWrite $0 'link.IconLocation = WScript.Arguments(1) & ",0"$\r$\n'
-      FileWrite $0 'link.Description = "DY Canvas"$\r$\n'
-      FileWrite $0 'link.Save$\r$\n'
-      FileClose $0
-      ${IfNot} ${FileExists} "$newStartMenuLink"
-        ExecWait '"$SYSDIR\wscript.exe" //B //NoLogo "$PLUGINSDIR\canvas-shortcut.vbs" "$newStartMenuLink" "$appExe" "$INSTDIR"' $0
-      ${EndIf}
-      ${IfNot} ${isNoDesktopShortcut}
-      ${AndIfNot} ${FileExists} "$newDesktopLink"
-        ExecWait '"$SYSDIR\wscript.exe" //B //NoLogo "$PLUGINSDIR\canvas-shortcut.vbs" "$newDesktopLink" "$appExe" "$INSTDIR"' $0
-      ${EndIf}
+    StrCpy $2 "true"
+    ${IfNot} ${isNoDesktopShortcut}
+      StrCpy $1 "true"
     ${EndIf}
-    Pop $0
   ${EndIf}
+  ; Refresh existing links even when NSIS keeps them during an online update.
+  ${If} ${FileExists} "$SYSDIR\wscript.exe"
+    File /oname=$PLUGINSDIR\refresh-shortcuts.vbs "${BUILD_RESOURCES_DIR}\refresh-shortcuts.vbs"
+    ExecWait '"$SYSDIR\wscript.exe" //B //NoLogo "$PLUGINSDIR\refresh-shortcuts.vbs" "$appExe" "$INSTDIR\resources\DYcanvas-${VERSION}.ico" "${SHORTCUT_NAME}" "$newDesktopLink" "$newStartMenuLink" "$oldDesktopLink" "$oldStartMenuLink" "$1" "$2"' $0
+    ${If} $0 != 0
+      DetailPrint "Shortcut refresh could not finish. Windows shortcuts may need to be recreated."
+    ${EndIf}
+  ${EndIf}
+  ${If} ${FileExists} "$newDesktopLink"
+    WinShell::SetLnkAUMI "$newDesktopLink" "${APP_ID}"
+    System::Call 'Shell32::SHChangeNotify(i 0x2000, i 0x5, w "$newDesktopLink", p 0)'
+  ${EndIf}
+  ${If} ${FileExists} "$newStartMenuLink"
+    WinShell::SetLnkAUMI "$newStartMenuLink" "${APP_ID}"
+    System::Call 'Shell32::SHChangeNotify(i 0x2000, i 0x5, w "$newStartMenuLink", p 0)'
+  ${EndIf}
+  System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, p 0, p 0)'
+  Pop $2
+  Pop $1
+  Pop $0
 !macroend

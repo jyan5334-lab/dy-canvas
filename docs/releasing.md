@@ -11,4 +11,6 @@
 
 本项目的本地构建入口设置 `publish: never`，不会在构建时自动上传。不要手动改动清单里的版本或校验值来伪造更新，必须上传同一次构建的产物。
 
+涉及品牌或快捷方式变更时，在 Windows PowerShell 7 中执行 `npm run test:shortcuts`，检查重命名、图标刷新、已删除快捷方式、同名冲突与重复链接。测试只在 `release/shortcut-test-*` 创建样本，不改系统桌面或安装注册表。安装包中的 `resources/DYcanvas-版本.ico` 必须与该版 `desktop/icon.ico` 一致。
+
 更新由 Electron 主进程的 `electron-updater` 执行；网页画布仍限制外部网络请求。客户端不携带 GitHub 访问令牌。只检查正式新版本，不自动降级，不自动下载，不在退出时自动安装。安装前保存本地数据，下载时和启动安装前校验安装文件。当前未提供 Windows 代码签名，校验值用于验证下载完整性，不替代发布者数字签名。
