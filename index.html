@@ -27,6 +27,7 @@
           </div>
           <span class="toolbar-divider desktop-divider"></span>
           <button class="icon-button theme-toggle" id="themeToggle" title="切换白天 / 夜晚模式" aria-label="切换白天 / 夜晚模式"><span data-icon="Sun"></span></button>
+          <button class="icon-button desktop-update-toggle" id="desktopUpdateButton" title="检查更新" aria-label="检查更新" hidden><span data-icon="CloudDownload"></span><span class="update-indicator" hidden></span></button>
           <button class="icon-button mobile-file-toggle" id="mobileFileToggle" title="画布文件" aria-label="画布文件" aria-expanded="false"><span data-icon="Ellipsis"></span></button>
           <button class="primary-button" id="presentButton" title="进入讲解模式"><span data-icon="Play"></span><span>讲解</span></button>
         </div>
@@ -117,7 +118,18 @@
     </div>
     <dialog id="libraryDialog" class="workspace-dialog" aria-labelledby="libraryDialogTitle"><div class="dialog-heading"><h2 id="libraryDialogTitle">本地画布库</h2><button class="icon-button" data-close-dialog="libraryDialog" title="关闭" aria-label="关闭画布库"><span data-icon="X"></span></button></div><label class="field-label library-name">当前画布名称<input id="boardNameField" type="text" maxlength="100" /></label><div class="library-toolbar"><div class="segmented-control" role="tablist" aria-label="画布库视图"><button id="libraryBoardsTab" role="tab" aria-selected="true">画布</button><button id="libraryVersionsTab" role="tab" aria-selected="false">历史版本</button></div><button id="libraryNewButton" class="icon-button" title="新建画布" aria-label="新建画布"><span data-icon="FilePlus2"></span></button></div><div id="libraryList" class="library-list" aria-live="polite"></div><div id="libraryStatus" class="library-status" role="status"></div></dialog>
     <dialog id="documentDialog" class="workspace-dialog document-dialog" aria-labelledby="documentDialogTitle"><div class="dialog-heading"><h2 id="documentDialogTitle">文档</h2><div class="action-group"><button id="downloadDocumentButton" class="icon-button" title="下载原文件" aria-label="下载原文件"><span data-icon="Download"></span></button><button class="icon-button" data-close-dialog="documentDialog" title="关闭" aria-label="关闭文档"><span data-icon="X"></span></button></div></div><div id="documentPreview" class="document-preview"></div></dialog>
+    <dialog id="desktopUpdateDialog" class="workspace-dialog update-dialog" aria-labelledby="updateDialogTitle">
+      <div class="dialog-heading"><h2 id="updateDialogTitle">软件更新</h2><button class="icon-button" id="closeUpdateDialog" title="关闭" aria-label="关闭更新窗口"><span data-icon="X"></span></button></div>
+      <div class="update-content">
+        <div class="update-product"><img src="./media/dy-canvas-symbol.png" alt="" /><div><strong>DY画布</strong><span id="updateCurrentVersion"></span></div></div>
+        <h3 id="updateStatus" role="status" aria-live="polite">检查新版本</h3>
+        <p id="updateMessage" class="update-message"></p>
+        <div id="updateProgressSection" hidden><progress id="updateProgress" max="100" value="0" aria-label="更新下载进度"></progress><div id="updateProgressText" class="update-progress-text"></div></div>
+        <section id="updateNotesSection" class="update-notes-section" hidden><h4>更新内容</h4><div id="updateNotes" class="update-notes"></div></section>
+      </div>
+      <div class="update-footer"><button id="updateReleasesButton" class="update-release-link">版本页面<span data-icon="ExternalLink"></span></button><div class="action-group"><button id="updateCancelButton" class="update-secondary" hidden>取消下载</button><button id="updateCheckButton" class="update-secondary">检查更新</button><button id="updateDownloadButton" class="primary-button" hidden><span data-icon="Download"></span><span>下载更新</span></button><button id="updateInstallButton" class="primary-button" hidden><span data-icon="ArrowUpFromLine"></span><span>安装并重启</span></button></div></div>
+    </dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./vendor/lucide.min.js"></script><script src="./media/sample-observation.js"></script><script src="./vendor/html-to-image.js"></script><script src="./workspace-features.js"></script><script src="./app.js"></script>
+    <script src="./vendor/lucide.min.js"></script><script src="./media/sample-observation.js"></script><script src="./vendor/html-to-image.js"></script><script src="./workspace-features.js"></script><script src="./app.js"></script><script src="./desktop-updates.js"></script>
   </body>
 </html>

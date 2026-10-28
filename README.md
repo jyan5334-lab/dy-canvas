@@ -48,11 +48,19 @@
 
 ### Windows 桌面版
 
-1. 从 [Releases](https://github.com/jyan5334-lab/dy-canvas/releases) 下载 `DYCanvas-Setup-1.0.1-x64.exe`。
+1. 从 [Releases](https://github.com/jyan5334-lab/dy-canvas/releases/latest) 下载最新的 `DYCanvas-Setup-版本-x64.exe`。
 2. 在 Windows 10 / 11 的 64 位 x64 系统运行安装包。
 3. 从桌面或开始菜单打开「DY画布」。
 
 安装后的应用可离线使用，无需另装 Node.js 或启动服务器。当前安装包未做数字签名。
+
+### 桌面版在线更新
+
+从 1.1.0 起，顶部云下载图标可打开「软件更新」。应用启动后也会检查 GitHub Releases 的正式版本，有更新时图标显示提示点。点击「下载更新」，完成后点击「安装并重启」；应用先保存画布，再校验文件并打开安装向导。下载可取消，关闭更新窗口后仍可在后台继续下载。
+
+1.0.1 及更早版本需要手动安装一次新版。覆盖安装沿用 `%APPDATA%\WirelessCanvas` 中的本地画布和附件。断网仍可使用画布；软件不会自动下载或在退出时自动安装。浏览器版不显示此入口。
+
+发布新版本的构建与更新清单要求见 [版本发布说明](docs/releasing.md)。
 
 ### 浏览器版
 

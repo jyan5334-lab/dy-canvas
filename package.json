@@ -1,12 +1,13 @@
 {
   "name": "wireless-canvas",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "DY Canvas - Offline canvas for presentations and knowledge organization",
   "author": "Wireless Canvas",
   "license": "UNLICENSED",
   "private": true,
   "main": "desktop/main.cjs",
   "scripts": {
+    "test": "node --test desktop/update-controller.test.cjs",
     "start": "electron .",
     "predist:win": "node node_modules/electron/install.js",
     "dist:win": "node desktop/build-windows.cjs",
@@ -24,15 +25,39 @@
     "asar": true,
     "compression": "maximum",
     "electronDist": "node_modules/electron/dist",
-    "directories": { "output": "release", "buildResources": "desktop" },
+    "directories": {
+      "output": "release",
+      "buildResources": "desktop"
+    },
     "files": [
-      "index.html", "app.js", "workspace-features.js", "style.css",
-      "media/**/*", "vendor/**/*", "desktop/main.cjs", "desktop/preload.cjs",
-      "desktop/icon.png", "package.json", "README.md", "docs/user-guide.md",
-      "CHANGELOG.md", "THIRD_PARTY_NOTICES.md"
+      "index.html",
+      "app.js",
+      "workspace-features.js",
+      "style.css",
+      "media/**/*",
+      "vendor/**/*",
+      "desktop/main.cjs",
+      "desktop/preload.cjs",
+      "desktop/update-controller.cjs",
+      "desktop-updates.js",
+      "desktop/icon.png",
+      "package.json",
+      "README.md",
+      "docs/user-guide.md",
+      "docs/releasing.md",
+      "CHANGELOG.md",
+      "THIRD_PARTY_NOTICES.md"
     ],
+    "publish": [{ "provider": "github", "owner": "jyan5334-lab", "repo": "dy-canvas", "releaseType": "release" }],
     "win": {
-      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "desktop/icon.ico",
       "artifactName": "DYCanvas-Setup-${version}-${arch}.${ext}",
       "requestedExecutionLevel": "asInvoker"
@@ -48,10 +73,16 @@
       "createStartMenuShortcut": true,
       "shortcutName": "DY画布",
       "uninstallDisplayName": "DY画布",
-      "installerLanguages": ["zh_CN", "en_US"],
+      "installerLanguages": [
+        "zh_CN",
+        "en_US"
+      ],
       "displayLanguageSelector": false,
       "deleteAppDataOnUninstall": false,
       "runAfterFinish": true
     }
+  },
+  "dependencies": {
+    "electron-updater": "6.8.12"
   }
 }

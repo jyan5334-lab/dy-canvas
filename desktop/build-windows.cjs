@@ -24,7 +24,7 @@ if (process.platform === "win32") {
   };
 }
 
-build({ projectDir, targets: Platform.WINDOWS.createTarget(["nsis"], Arch.x64) })
+build({ projectDir, publish: "never", targets: Platform.WINDOWS.createTarget(["nsis"], Arch.x64) })
   .then(artifacts => {
     const installer = artifacts.find(file => file.endsWith(".exe"));
     if (!installer || fs.statSync(installer).size < 50 * 1024 * 1024) {

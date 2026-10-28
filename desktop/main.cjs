@@ -1,4 +1,6 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain, net, protocol } = require("electron");
+const { app, BrowserWindow, Menu, dialog, ipcMain, net, protocol, shell } = require("electron");
+const { autoUpdater } = require("electron-updater");
+const { createUpdateController, RELEASES_URL } = require("./update-controller.cjs");
 const fs = require("node:fs");
 const path = require("node:path");
 const { pathToFileURL } = require("node:url");
@@ -20,11 +22,35 @@ let mainWindow = null;
 let closing = false;
 let allowClose = false;
 let closeTimer;
+let updates;
+let installAfterSave = false;
+let updateTimer;
+let periodicUpdateTimer;
 const contentPolicy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; frame-src 'self' blob:; connect-src 'self' data: blob:; object-src 'self' blob:; base-uri 'none'; form-action 'none'";
 
 function isCanvasURL(value) {
   try { const url = new URL(value); return url.protocol === "canvas:" && url.hostname === "app"; }
   catch { return false; }
+}
+
+function trustedSender(event) {
+  return mainWindow && event.sender === mainWindow.webContents &&
+    event.senderFrame === mainWindow.webContents.mainFrame && isCanvasURL(event.senderFrame.url);
+}
+
+function cancelClose() {
+  clearTimeout(closeTimer);
+  closing = false;
+  allowClose = false;
+  installAfterSave = false;
+  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send("canvas:close-cancelled");
+}
+
+function prepareClose() {
+  if (closing || !mainWindow) return;
+  closing = true;
+  mainWindow.webContents.send("canvas:prepare-close");
+  waitForClose();
 }
 
 function waitForClose() {
@@ -34,12 +60,12 @@ function waitForClose() {
     const { response } = await dialog.showMessageBox(mainWindow, {
       type: "question", title: "DY画布", message: "画布仍在保存",
       detail: "可以继续等待，或返回画布。直接退出可能丢失尚未保存的内容。",
-      buttons: ["继续等待", "返回画布", "直接退出"], defaultId: 0, cancelId: 1
+      buttons: installAfterSave ? ["继续等待", "返回画布"] : ["继续等待", "返回画布", "直接退出"], defaultId: 0, cancelId: 1
     });
     if (allowClose || !mainWindow || mainWindow.isDestroyed()) return;
     if (response === 0) waitForClose();
     else if (response === 2) { allowClose = true; mainWindow.close(); }
-    else closing = false;
+    else { updates?.cancelInstall(); cancelClose(); }
   }, 12000);
 }
 
@@ -83,10 +109,7 @@ function createWindow() {
   mainWindow.on("close", event => {
     if (allowClose) return;
     event.preventDefault();
-    if (closing) return;
-    closing = true;
-    contents.send("canvas:prepare-close");
-    waitForClose();
+    prepareClose();
   });
   mainWindow.on("closed", () => { clearTimeout(closeTimer); mainWindow = null; });
   contents.on("did-fail-load", (_event, code, description, url, isMainFrame) => {
@@ -97,20 +120,33 @@ function createWindow() {
 }
 
 ipcMain.on("canvas:close-ready", async (event, saved) => {
-  if (!mainWindow || event.sender !== mainWindow.webContents || !isCanvasURL(event.sender.getURL()) || !closing) return;
+  if (!trustedSender(event) || !closing) return;
   clearTimeout(closeTimer);
   if (saved === true) {
     mainWindow.webContents.session.flushStorageData();
     allowClose = true;
-    mainWindow.close();
+    if (installAfterSave) {
+      if (!await updates.installSaved()) cancelClose();
+    } else mainWindow.close();
   } else {
-    closing = false;
+    updates?.cancelInstall("画布保存失败，安装已暂停。请备份后重试。");
+    cancelClose();
     await dialog.showMessageBox(mainWindow, {
       type: "error", title: "尚未退出", message: "画布保存失败，已保留当前窗口。",
       detail: "请先导出 JSON 备份，再重试保存。", buttons: ["返回画布"]
     });
   }
 });
+
+for (const action of ["state", "check", "download", "cancel", "install", "releases"]) {
+  ipcMain.handle(`canvas:update-${action}`, async event => {
+    if (!trustedSender(event) || !updates) throw new Error("Untrusted update request");
+    if (action === "releases") await shell.openExternal(RELEASES_URL);
+    else if (action === "check" || action === "download") void updates[action]();
+    else if (action !== "state") updates[action]();
+    return updates.snapshot();
+  });
+}
 
 if (!app.requestSingleInstanceLock()) app.quit();
 else {
@@ -133,7 +169,27 @@ else {
       } catch { return new Response("Not found", { status: 404 }); }
     });
     Menu.setApplicationMenu(null);
+    updates = createUpdateController({
+      updater: autoUpdater, currentVersion: app.getVersion(), enabled: app.isPackaged && process.platform === "win32",
+      onState: state => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send("canvas:update-state", state);
+          mainWindow.setProgressBar(state.phase === "downloading" ? state.percent / 100 : -1);
+        }
+        if (installAfterSave && state.phase === "error") cancelClose();
+      },
+      requestInstall: () => {
+        if (closing) { updates.cancelInstall("正在退出，请重新打开后安装。"); return; }
+        installAfterSave = true;
+        prepareClose();
+      }
+    });
     createWindow();
+    if (!testing && app.isPackaged) {
+      updateTimer = setTimeout(() => updates.check(), 12000);
+      periodicUpdateTimer = setInterval(() => updates.check(), 6 * 60 * 60 * 1000);
+    }
   }).catch(error => { dialog.showErrorBox("DY画布启动失败", error.message); app.quit(); });
   app.on("window-all-closed", () => app.quit());
+  app.on("will-quit", () => { clearTimeout(updateTimer); clearInterval(periodicUpdateTimer); updates?.dispose(); });
 }

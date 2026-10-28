@@ -6,5 +6,8 @@ licenses are included in the installed application directory.
 The application interface uses Lucide icons. See `vendor/lucide.LICENSE`.
 Image export uses html-to-image. See `vendor/html-to-image.LICENSE`.
 
+Desktop updates use electron-updater (MIT) and its runtime dependencies.
+Their license files are distributed with their packages inside app.asar.
+
 The DY Canvas application logo uses the user-approved custom brand artwork.
 Lucide is used for interface controls, not the application logo.

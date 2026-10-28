@@ -286,6 +286,7 @@ function bindWorkspaceFeatures(){
   $("#revealOrderList").addEventListener("click",event=>{const button=event.target.closest("[data-order-node]");if(button)moveRevealOrder(button.dataset.orderNode,Number(button.dataset.direction));});
   window.addEventListener("pagehide",()=>{if(!boardLibrary.busy&&!desktopClosing)saveBoardToLibrary();});
 }
+if(window.canvasDesktop?.isDesktop)window.canvasDesktop.onCloseCancelled?.(()=>{desktopClosing=false;document.body.inert=false;});
 if(window.canvasDesktop?.isDesktop)window.canvasDesktop.onBeforeClose(async()=>{
   if(desktopClosing)return;desktopClosing=true;document.body.inert=true;
   let saved=false;
